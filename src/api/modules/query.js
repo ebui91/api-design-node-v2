@@ -29,27 +29,52 @@ export const controllers = {
 }
 
 export const createOne = (model) => (req, res, next) => {
-
+  return controllers.createOne(model, req.body)
+    .then(response => res.status(201).json(response))
+    .catch(error => res.status(500).send("Error: could not process createOne."))
 }
 
 export const updateOne = (model) => async (req, res, next) => {
+  const docToUpdate = req.docFromId
+  const update = req.body
 
+  return controllers.updateOne(docToUpdate, update)
+    .then(response => res.status(200).json(reponse))
+    .catch(error => res.status(500).send("Error: could not process updateOne."))
 }
 
 export const deleteOne = (model) => (req, res, next) => {
+  const docToDelete = req.docFromId
 
+  return controllers.deleteOne(docToDelete)
+    .then(response => res.status(200).json(response))
+    .catch(error => res.status(500).send("Error: could not process deleteOne."))
 }
 
 export const getOne = (model) => (req, res, next) => {
+  const docToGet = req.docFromId
 
+  return controllers.getOne(docToGet)
+    .then(response => res.status(200).json(response))
+    .catch(error => res.status(500).send("Error: could not fetch data for getOne."))
 }
 
 export const getAll = (model) => (req, res, next) => {
-
+  return controllers.getAll(model)
+    .then(response => res.status(200).json(response))
+    .catch(error => res.status(500).send("Error: could not fetch data for getAll."))
 }
 
 export const findByParam = (model) => (req, res, next, id) => {
-  
+  return controllers.findByParam(model, id || req.params.id)
+    .then(doc => {
+      if(!doc) {
+        next(new Error('Data not found.'))
+      }
+      req.docFromId = doc
+      next()
+    })
+    .catch(error => res.status(500).send(`Error: could not find data with id: ${id}.`))
 }
 
 
